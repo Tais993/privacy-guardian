@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Arrays;
 import java.util.List;
 
-/** Displays the overview returned by {@link PrivacyService} after the scanning animation. */
+/** Displays the overviews returned by {@link PrivacyService} after the scanning animation. */
 @Controller
 public class ResultsController {
 
@@ -23,10 +23,10 @@ public class ResultsController {
                           @RequestParam(required = false) String urls,
                           Model model) {
         try {
-            String overview = username != null && !username.isBlank()
+            List<String> overviews = username != null && !username.isBlank()
                     ? privacyService.getOverviewByUsername(username.strip())
                     : privacyService.getOverviewByUrls(urlLines(urls));
-            model.addAttribute("privacyResult", overview);
+            model.addAttribute("privacyOverviews", overviews);
         } catch (RuntimeException exception) {
             model.addAttribute("privacyError", "The privacy overview could not be generated. Please check that the required local services are running and try again.");
         }

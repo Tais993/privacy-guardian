@@ -22,11 +22,17 @@
         <section class="results-panel">
             <p class="eyebrow">Privacy scan complete</p>
             <h1 class="results-title">Your privacy <span>snapshot</span></h1>
-            <p class="results-intro">Here is the privacy overview generated from the sources you submitted.</p>
-            <article class="summary-card" th:if="${privacyResult}">
-                <p class="risk-label">Generated privacy overview</p>
-                <p class="summary-card__content" th:text="${privacyResult}">Your privacy summary will appear here.</p>
-            </article>
+            <p class="results-intro">Privacy policy results for the websites in your scan.</p>
+            <th:block th:if="${privacyOverviews != null}">
+                <ul class="overview-list" role="list" th:unless="${#lists.isEmpty(privacyOverviews)}">
+                    <li class="summary-card overview-list__item" th:each="overview : ${privacyOverviews}">
+                        <p class="summary-card__content" th:text="${overview}">Your privacy summary will appear here.</p>
+                    </li>
+                </ul>
+                <div class="summary-card" th:if="${#lists.isEmpty(privacyOverviews)}">
+                    <p class="summary-card__content">No websites were found to check for privacy policies.</p>
+                </div>
+            </th:block>
             <article class="summary-card summary-card--error" th:if="${privacyError}">
                 <p class="risk-label">Could not complete the scan</p>
                 <p class="summary-card__content" th:text="${privacyError}">The privacy overview could not be generated.</p>

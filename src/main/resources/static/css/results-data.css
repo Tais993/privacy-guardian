@@ -1,3 +1,43 @@
-.summary-card { max-width: 760px; margin: 0 auto; padding: 28px 31px; border: 1px solid rgba(85, 217, 255, .27); border-radius: 20px; background: var(--panel); box-shadow: 0 20px 55px rgba(0, 0, 0, .19); text-align: left; }
-.summary-card--error { border-color: rgba(255, 179, 100, .35); }
-.summary-card__content { margin: 14px 0 0; color: #d5ddf2; line-height: 1.7; white-space: pre-line; }
+.overview-list {
+    display: grid;
+    gap: 16px;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+}
+
+.summary-card {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: clamp(18px, 4vw, 28px) clamp(18px, 4vw, 31px);
+    border: 1px solid rgba(85, 217, 255, .27);
+    border-radius: 20px;
+    background: var(--panel);
+    box-shadow: 0 20px 55px rgba(0, 0, 0, .19);
+    text-align: left;
+}
+
+.overview-list__item {
+    margin: 0;
+    border-inline-start: 3px solid var(--cyan);
+}
+
+.summary-card--error {
+    border-color: rgba(255, 179, 100, .35);
+}
+
+.summary-card__content {
+    margin: 0;
+    color: #d5ddf2;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+    white-space: pre-line;
+}
+
+@media (min-width: 601px) {
+    .results-content {
+        max-height: 100vh;
+        align-content: safe center;
+    }
+}

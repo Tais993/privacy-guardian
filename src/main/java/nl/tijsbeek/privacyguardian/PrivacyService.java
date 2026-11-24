@@ -3,12 +3,12 @@ package nl.tijsbeek.privacyguardian;
 import nl.tijsbeek.privacyguardian.PrivacyReaderService.PolicyLookup;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringJoiner;
 
 /**
- * Combines service results into an overview of privacy policies for a username.
+ * Builds one privacy policy overview per website.
  */
 @Service
 public class PrivacyService {
@@ -25,14 +25,14 @@ public class PrivacyService {
         this.privacySummaryService = privacySummaryService;
     }
 
-    public String getOverviewByUsername(String username) {
+    public List<String> getOverviewByUsername(String username) {
         List<String> siteLinks = sherlockService.getSiteLinks(username);
         return getOverviewByUrls(siteLinks);
     }
 
-    public String getOverviewByUrls(List<String> siteLinks) {
+    public List<String> getOverviewByUrls(List<String> siteLinks) {
         if (siteLinks.isEmpty()) {
-            return "No websites were found to check for privacy policies.";
+            return List.of();
         }
 
         List<PolicyLookup> lookups = siteLinks.stream()
@@ -43,15 +43,15 @@ public class PrivacyService {
                 .toList();
         Iterator<String> summaries = privacySummaryService.generateSummaries(readablePolicies).iterator();
 
-        StringJoiner overview = new StringJoiner("\n\n");
+        List<String> overviews = new ArrayList<>(lookups.size());
         for (int i = 0; i < lookups.size(); i++) {
             String url = siteLinks.get(i);
             PolicyLookup policy = lookups.get(i);
             String heading = policy.policyUrl() == null ? url : url + " (" + policy.policyUrl() + ")";
             String result = policy.error() == null ? summaries.next() : policy.error();
-            overview.add(heading + "\n" + result);
+            overviews.add(heading + "\n" + result);
         }
 
-        return overview.toString();
+        return List.copyOf(overviews);
     }
 }
