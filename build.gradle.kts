@@ -21,6 +21,9 @@ repositories {
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
+
+    implementation("org.apache.commons:commons-csv:1.14.1")
+
     testImplementation("org.springframework.boot:spring-boot-starter-thymeleaf-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
