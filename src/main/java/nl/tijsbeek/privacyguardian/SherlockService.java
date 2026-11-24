@@ -3,6 +3,7 @@ package nl.tijsbeek.privacyguardian;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -14,10 +15,16 @@ import java.util.stream.Stream;
 @Service
 public class SherlockService {
 
+    private final boolean testMode;
+
+    public SherlockService(@Value("${sherlock.test-mode:false}") boolean testMode) {
+        this.testMode = testMode;
+    }
+
     public List<String> getSiteLinks(String userName) {
         try {
 
-            Path outputPath = runSherlock(userName, false);
+            Path outputPath = runSherlock(userName);
 
             Path csvPath = checkForCsvOutput(outputPath);
             return readIntoMainUrls(csvPath);
@@ -28,8 +35,8 @@ public class SherlockService {
         }
     }
 
-    private Path runSherlock(String userName, boolean test) {
-        if (test) {
+    private Path runSherlock(String userName) {
+        if (testMode) {
             return Path.of("C:\\Users\\tijs\\Documents\\Test");
         }
 
