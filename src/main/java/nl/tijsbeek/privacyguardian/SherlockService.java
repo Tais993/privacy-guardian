@@ -16,9 +16,12 @@ import java.util.stream.Stream;
 public class SherlockService {
 
     private final boolean testMode;
+    private final String testOutputFolder;
 
-    public SherlockService(@Value("${sherlock.test-mode:false}") boolean testMode) {
+    public SherlockService(@Value("${sherlock.test-mode:false}") boolean testMode,
+                           @Value("${sherlock.test-output-folder}") String testOutputFolder) {
         this.testMode = testMode;
+        this.testOutputFolder = testOutputFolder;
     }
 
     public List<String> getSiteLinks(String userName) {
@@ -37,7 +40,7 @@ public class SherlockService {
 
     private Path runSherlock(String userName) {
         if (testMode) {
-            return Path.of("C:\\Users\\tijs\\Documents\\Test");
+            return Path.of(testOutputFolder);
         }
 
         Process sherlockProcess = null;

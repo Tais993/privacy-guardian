@@ -27,7 +27,7 @@ class PrivacyServiceTest {
                 .toList();
         Map<URI, PolicyLookup> lookups = Map.of(bandcamp.siteUrl(), bandcamp, github.siteUrl(), github,
                 bitbucket.siteUrl(), bitbucket, other.siteUrl(), other);
-        SherlockService sherlock = new SherlockService(false) {
+        SherlockService sherlock = new SherlockService(false, "") {
             @Override
             public List<String> getSiteLinks(String username) {
                 return sites;
