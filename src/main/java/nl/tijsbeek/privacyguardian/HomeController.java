@@ -18,4 +18,9 @@ public class HomeController {
         model.addAttribute("welcomeMessage", homeService.getWelcomeMessage());
         return "home";
     }
+
+    @GetMapping("/decision")
+    public String decision() {
+        return "decision";
+    }
 }

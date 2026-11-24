@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#070b18">
+    <title>Choose a privacy scan · Privacy Guardian</title>
+    <link rel="stylesheet" th:href="@{/css/privacy-guardian.css}" href="/css/privacy-guardian.css">
+    <script src="/js/decision.js" defer></script>
+</head>
+<body>
+    <div class="background" aria-hidden="true"></div>
+    <div class="app-shell">
+        <aside class="sidebar" aria-label="Primary navigation">
+            <a class="brand" href="/" aria-label="Privacy Guardian home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 4.8 6v5.4c0 4.7 3.1 8.2 7.2 9.6 4.1-1.4 7.2-4.9 7.2-9.6V6L12 3Z"/><path d="M9.5 12.2 11.2 14l3.7-4"/></svg></a>
+            <nav class="side-nav">
+                <a class="nav-link is-active" href="/decision" title="Privacy decisions"><span>Privacy decisions</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h14v16H5z"/><path d="m8 9 1.5 1.5L13 7M8 15h8"/></svg></a>
+                <a class="nav-link" href="/scanning" title="Scan privacy"><span>Scan privacy</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4M8.5 11h5M11 8.5v5"/></svg></a>
+                <a class="nav-link" href="/results" title="Scan results"><span>Scan results</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5m0 14h16M8 16v-4m4 4V8m4 8v-6"/></svg></a>
+            </nav>
+        </aside>
+        <main class="content decision-content">
+            <section class="decision-panel" aria-labelledby="decision-title">
+                <p class="eyebrow">Privacy scan</p>
+                <h1 class="decision-title" id="decision-title">What would you like to <span>scan?</span></h1>
+                <p class="decision-intro">Choose how you want to explore your digital footprint. You can check the websites you use or see where a username appears online.</p>
+                <div class="choice-grid">
+                    <button class="choice-card" type="button" data-open-modal="url-modal">
+                        <span class="choice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><path d="M4.5 12h15M12 4a12.5 12.5 0 0 1 0 16M12 4a12.5 12.5 0 0 0 0 16"/></svg></span>
+                        <h2>Website links</h2><p>Check one or more websites for privacy-relevant information and signals.</p><span class="choice-arrow">→</span>
+                    </button>
+                    <button class="choice-card" type="button" data-open-modal="username-modal">
+                        <span class="choice-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-3.3 3.1-5 7-5s6.2 1.7 7 5"/></svg></span>
+                        <h2>Username</h2><p>Explore the public online presence connected to a username you provide.</p><span class="choice-arrow">→</span>
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+    <div class="modal" id="url-modal" hidden role="dialog" aria-modal="true" aria-labelledby="url-modal-title">
+        <div class="modal-box">
+            <button class="modal-close" type="button" data-close-modal aria-label="Close">×</button>
+            <h2 id="url-modal-title">Add website links</h2>
+            <p>Enter one website per line. Press Enter after each address to add another.</p>
+            <form data-demo-form>
+                <label for="website-urls" class="visually-hidden">Website URLs</label>
+                <textarea id="website-urls" class="url-input" name="urls" placeholder="https://example.com" autofocus></textarea>
+                <p class="form-hint">You can add multiple links. Nothing is submitted or scanned yet.</p>
+                <button class="modal-submit" type="submit">Continue with these links</button>
+            </form>
+        </div>
+    </div>
+    <div class="modal" id="username-modal" hidden role="dialog" aria-modal="true" aria-labelledby="username-modal-title">
+        <div class="modal-box">
+            <button class="modal-close" type="button" data-close-modal aria-label="Close">×</button>
+            <h2 id="username-modal-title">Add a username</h2>
+            <p>Enter the public username you would like to explore.</p>
+            <form data-demo-form>
+                <label for="username" class="visually-hidden">Username</label>
+                <input id="username" class="url-input" name="username" placeholder="@yourusername" autocomplete="off">
+                <p class="form-hint">This is a visual prototype only; no information is submitted.</p>
+                <button class="modal-submit" type="submit">Continue with this username</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
