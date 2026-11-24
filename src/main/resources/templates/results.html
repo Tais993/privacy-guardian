@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Results · Privacy Guardian</title>
+    <link rel="stylesheet" th:href="@{/css/privacy-guardian.css}" href="/css/privacy-guardian.css">
+    <link rel="stylesheet" th:href="@{/css/scan-results.css}" href="/css/scan-results.css">
+    <link rel="stylesheet" th:href="@{/css/results-data.css}" href="/css/results-data.css">
+</head>
+<body>
+<div class="background" aria-hidden="true"></div>
+<div class="app-shell">
+    <aside class="sidebar" aria-label="Primary navigation">
+        <a class="brand" href="/" aria-label="Privacy Guardian home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 4.8 6v5.4c0 4.7 3.1 8.2 7.2 9.6 4.1-1.4 7.2-4.9 7.2-9.6V6L12 3Z"/><path d="M9.5 12.2 11.2 14l3.7-4"/></svg></a>
+        <nav class="side-nav">
+            <a class="nav-link" href="/decision" title="Privacy decisions"><span>Privacy decisions</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h14v16H5z"/><path d="m8 9 1.5 1.5L13 7M8 15h8"/></svg></a>
+            <a class="nav-link" href="/scanning" title="Scan privacy"><span>Scan privacy</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4M8.5 11h5M11 8.5v5"/></svg></a>
+            <a class="nav-link is-active" href="/results" title="Scan results"><span>Scan results</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5m0 14h16M8 16v-4m4 4V8m4 8v-6"/></svg></a>
+        </nav>
+    </aside>
+    <main class="content results-content">
+        <section class="results-panel">
+            <p class="eyebrow">Privacy scan complete</p>
+            <h1 class="results-title">Your privacy <span>snapshot</span></h1>
+            <p class="results-intro">Here is the privacy overview generated from the sources you submitted.</p>
+            <article class="summary-card" th:if="${privacyResult}">
+                <p class="risk-label">Generated privacy overview</p>
+                <p class="summary-card__content" th:text="${privacyResult}">Your privacy summary will appear here.</p>
+            </article>
+            <article class="summary-card summary-card--error" th:if="${privacyError}">
+                <p class="risk-label">Could not complete the scan</p>
+                <p class="summary-card__content" th:text="${privacyError}">The privacy overview could not be generated.</p>
+            </article>
+            <a class="cta results-cta" href="/decision">Start another scan</a>
+        </section>
+    </main>
+</div>
+</body>
+</html>

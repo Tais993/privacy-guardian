@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Scanning · Privacy Guardian</title>
+    <link rel="stylesheet" th:href="@{/css/privacy-guardian.css}" href="/css/privacy-guardian.css">
+    <link rel="stylesheet" th:href="@{/css/scan-results.css}" href="/css/scan-results.css">
+    <script src="/js/scanning.js" defer></script>
+</head>
+<body>
+<div class="background" aria-hidden="true"></div>
+<div class="app-shell">
+    <aside class="sidebar" aria-label="Primary navigation">
+        <a class="brand" href="/" aria-label="Privacy Guardian home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 4.8 6v5.4c0 4.7 3.1 8.2 7.2 9.6 4.1-1.4 7.2-4.9 7.2-9.6V6L12 3Z"/><path d="M9.5 12.2 11.2 14l3.7-4"/></svg></a>
+        <nav class="side-nav">
+            <a class="nav-link" href="/decision" title="Privacy decisions"><span>Privacy decisions</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h14v16H5z"/><path d="m8 9 1.5 1.5L13 7M8 15h8"/></svg></a>
+            <a class="nav-link is-active" href="/scanning" title="Scan privacy"><span>Scan privacy</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4M8.5 11h5M11 8.5v5"/></svg></a>
+            <a class="nav-link" href="/results" title="Scan results"><span>Scan results</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5m0 14h16M8 16v-4m4 4V8m4 8v-6"/></svg></a>
+        </nav>
+    </aside>
+    <main class="content scan-content">
+        <section class="scan-panel" aria-live="polite">
+            <div class="scan-radar" aria-hidden="true"><div class="scan-radar__sweep"></div><span></span><span></span><span></span></div>
+            <p class="eyebrow">Privacy scan in progress</p>
+            <h1 class="scan-title">Checking your <span>digital footprint</span></h1>
+            <p class="scan-copy">We are reviewing the supplied sources and preparing your privacy overview.</p>
+            <div class="scan-progress" aria-label="Scan progress"><div class="scan-progress__fill"></div></div>
+            <p class="scan-percent"><strong id="scan-percent">0</strong>% complete</p>
+            <div class="scan-log" id="scan-log">
+                <p class="is-current">Connecting to supplied sources…</p>
+                <p>Locating privacy information</p>
+                <p>Reviewing data practices</p>
+                <p>Preparing your results</p>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

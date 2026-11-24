@@ -1,7 +1,6 @@
 package nl.tijsbeek.privacyguardian;
 
 import nl.tijsbeek.privacyguardian.PrivacyReaderService.PolicyLookup;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.Locale;
 import java.util.Map;
 
 @Service
-@ConditionalOnProperty(name = "ollama.enabled", havingValue = "false", matchIfMissing = true)
 public class HardcodedPrivacySummaryService implements PrivacySummaryService {
 
     private static final Map<String, String> SUMMARIES_BY_HOST = Map.ofEntries(

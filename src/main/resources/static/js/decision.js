@@ -10,5 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.target === modal) modal.hidden = true;
     }));
     document.addEventListener("keydown", (event) => { if (event.key === "Escape") closeAll(); });
-    document.querySelectorAll("[data-demo-form]").forEach((form) => form.addEventListener("submit", (event) => event.preventDefault()));
+    document.querySelectorAll("[data-demo-form]").forEach((form) => form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const query = new URLSearchParams(new FormData(form));
+        window.location.assign(`/scanning?${query.toString()}`);
+    }));
 });

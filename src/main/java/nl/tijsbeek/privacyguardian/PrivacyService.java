@@ -27,6 +27,10 @@ public class PrivacyService {
 
     public String getOverviewByUsername(String username) {
         List<String> siteLinks = sherlockService.getSiteLinks(username);
+        return getOverviewByUrls(siteLinks);
+    }
+
+    public String getOverviewByUrls(List<String> siteLinks) {
         if (siteLinks.isEmpty()) {
             return "No websites were found to check for privacy policies.";
         }
