@@ -23,9 +23,30 @@ public class PrivacyReaderService {
     public PolicyLookup lookupPolicy(String url) {
         URI site = webUri(url);
         if (site == null) {
-            return new PolicyLookup(null, null, "Invalid HTTP(S) URL");
+            return new PolicyLookup(null, null, null, "Invalid HTTP(S) URL");
         }
 
+        PolicyLookup lookup = discoverPolicy(site);
+        if (lookup.error() == null) {
+            return lookup;
+        }
+
+        // Some homepages do not expose a policy link in their static HTML.
+        String knownPolicyUrl = switch (site.getHost().toLowerCase(Locale.ROOT)) {
+            case "bsky.app", "bsky.social" -> "https://bsky.social/about/support/privacy-policy";
+            case "chess.com", "www.chess.com" -> "https://www.chess.com/legal/privacy";
+            case "github.com", "www.github.com" ->
+                    "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement";
+            default -> null;
+        };
+        if (knownPolicyUrl == null) {
+            return lookup;
+        }
+        URI policyUrl = URI.create(knownPolicyUrl);
+        return policyUrl.equals(lookup.policyUrl()) ? lookup : readPolicy(site, policyUrl);
+    }
+
+    private PolicyLookup discoverPolicy(URI site) {
         Optional<URI> policy;
         try {
             Document page = fetchPage(site);
@@ -39,14 +60,14 @@ public class PrivacyReaderService {
                 }
             }
         } catch (IOException | IllegalArgumentException e) {
-            return new PolicyLookup(null, null, "Could not read website");
+            return new PolicyLookup(site, null, null, "Could not read website");
         }
 
-        return policy.map(this::readPolicy)
-                .orElseGet(() -> new PolicyLookup(null, null, "Privacy policy link not found"));
+        return policy.map(policyUrl -> readPolicy(site, policyUrl))
+                .orElseGet(() -> new PolicyLookup(site, null, null, "Privacy policy link not found"));
     }
 
-    private PolicyLookup readPolicy(URI policyUrl) {
+    private PolicyLookup readPolicy(URI site, URI policyUrl) {
         try {
             Document document = fetchPage(policyUrl);
             URI finalUrl = URI.create(document.location());
@@ -54,11 +75,11 @@ public class PrivacyReaderService {
             Element main = document.selectFirst("main, [role=main]");
             String text = (main == null ? document.body() : main).text();
             if (text.isBlank()) {
-                return new PolicyLookup(finalUrl, null, "Privacy policy page contains no readable text");
+                return new PolicyLookup(site, finalUrl, null, "Privacy policy page contains no readable text");
             }
-            return new PolicyLookup(finalUrl, text, null);
+            return new PolicyLookup(site, finalUrl, text, null);
         } catch (IOException | IllegalArgumentException e) {
-            return new PolicyLookup(policyUrl, null, "Could not read privacy policy");
+            return new PolicyLookup(site, policyUrl, null, "Could not read privacy policy");
         }
     }
 
@@ -151,5 +172,5 @@ public class PrivacyReaderService {
         return null;
     }
 
-    public record PolicyLookup(URI policyUrl, String text, String error) { }
+    public record PolicyLookup(URI siteUrl, URI policyUrl, String text, String error) { }
 }

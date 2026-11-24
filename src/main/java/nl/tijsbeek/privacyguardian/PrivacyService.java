@@ -1,13 +1,14 @@
 package nl.tijsbeek.privacyguardian;
 
+import nl.tijsbeek.privacyguardian.PrivacyReaderService.PolicyLookup;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.StringJoiner;
 
 /**
- * Combines service results into an overview of privacy policies by username or URL.
+ * Combines service results into an overview of privacy policies for a username.
  */
 @Service
 public class PrivacyService {
@@ -26,23 +27,24 @@ public class PrivacyService {
 
     public String getOverviewByUsername(String username) {
         List<String> siteLinks = sherlockService.getSiteLinks(username);
-        return getOverviewByURLs(siteLinks);
-    }
+        if (siteLinks.isEmpty()) {
+            return "No websites were found to check for privacy policies.";
+        }
 
-    public String getOverviewByURLs(List<String> urls) {
+        List<PolicyLookup> lookups = siteLinks.stream()
+                .map(privacyReaderService::lookupPolicy)
+                .toList();
+        List<PolicyLookup> readablePolicies = lookups.stream()
+                .filter(policy -> policy.error() == null)
+                .toList();
+        Iterator<String> summaries = privacySummaryService.generateSummaries(readablePolicies).iterator();
+
         StringJoiner overview = new StringJoiner("\n\n");
-        overview.setEmptyValue("No websites were found to check for privacy policies.");
-        for (String url : urls) {
-            PrivacyReaderService.PolicyLookup policy = privacyReaderService.lookupPolicy(url);
+        for (int i = 0; i < lookups.size(); i++) {
+            String url = siteLinks.get(i);
+            PolicyLookup policy = lookups.get(i);
             String heading = policy.policyUrl() == null ? url : url + " (" + policy.policyUrl() + ")";
-            String result = policy.error();
-            if (result == null) {
-                try {
-                    result = privacySummaryService.generateSummary(policy.text());
-                } catch (RestClientException | IllegalStateException e) {
-                    result = "Could not summarize privacy policy with Ollama";
-                }
-            }
+            String result = policy.error() == null ? summaries.next() : policy.error();
             overview.add(heading + "\n" + result);
         }
 

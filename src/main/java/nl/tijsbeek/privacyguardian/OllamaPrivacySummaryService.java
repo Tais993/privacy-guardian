@@ -1,9 +1,11 @@
 package nl.tijsbeek.privacyguardian;
 
+import nl.tijsbeek.privacyguardian.PrivacyReaderService.PolicyLookup;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -35,7 +37,19 @@ public class OllamaPrivacySummaryService implements PrivacySummaryService {
     }
 
     @Override
-    public String generateSummary(String policyText) {
+    public List<String> generateSummaries(List<PolicyLookup> policies) {
+        return policies.stream().map(this::summarizePolicy).toList();
+    }
+
+    private String summarizePolicy(PolicyLookup policy) {
+        try {
+            return generateSummary(policy.text());
+        } catch (RestClientException | IllegalStateException e) {
+            return "Could not summarize privacy policy with Ollama";
+        }
+    }
+
+    private String generateSummary(String policyText) {
         OllamaChatResponse response = ollamaClient.post()
                 .uri("/api/chat")
                 .body(new OllamaChatRequest(
