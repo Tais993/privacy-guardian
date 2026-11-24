@@ -13,10 +13,14 @@ public class PrivacyService {
 
     private final SherlockService sherlockService;
     private final PrivacyReaderService privacyReaderService;
+    private final PrivacySummaryService privacySummaryService;
 
-    public PrivacyService(SherlockService sherlockService, PrivacyReaderService privacyReaderService) {
+    public PrivacyService(SherlockService sherlockService,
+                          PrivacyReaderService privacyReaderService,
+                          PrivacySummaryService privacySummaryService) {
         this.sherlockService = sherlockService;
         this.privacyReaderService = privacyReaderService;
+        this.privacySummaryService = privacySummaryService;
     }
 
     public String getOverviewByUsername(String username) {
@@ -25,8 +29,10 @@ public class PrivacyService {
     }
 
     public String getOverviewByURLs(List<String> urls) {
-        return urls.stream()
-                .map(url -> url + " -> " + privacyReaderService.lookupPolicy(url))
-                .collect(Collectors.joining("\n"));
+        List<String> listOfPrivacyStatements = urls.stream()
+                .map(privacyReaderService::lookupPolicy)
+                .collect(Collectors.toList());
+
+        return privacySummaryService.generateSummary(listOfPrivacyStatements);
     }
 }

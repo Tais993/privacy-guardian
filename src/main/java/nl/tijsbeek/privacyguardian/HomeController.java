@@ -8,13 +8,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController {
 
     private final HomeService homeService;
+    private final PrivacyService privacyService;
 
-    public HomeController(HomeService homeService) {
+    public HomeController(HomeService homeService, PrivacyService privacyService) {
         this.homeService = homeService;
+        this.privacyService = privacyService;
     }
 
     @GetMapping("/")
     public String home(Model model) {
+        System.out.println(privacyService.getOverviewByUsername("NasiHond"));
         model.addAttribute("welcomeMessage", homeService.getWelcomeMessage());
         return "home";
     }

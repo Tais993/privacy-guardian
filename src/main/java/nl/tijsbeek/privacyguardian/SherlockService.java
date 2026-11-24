@@ -17,7 +17,7 @@ public class SherlockService {
     public List<String> getSiteLinks(String userName) {
         try {
 
-            Path outputPath = runSherlock(userName, true);
+            Path outputPath = runSherlock(userName, false);
 
             Path csvPath = checkForCsvOutput(outputPath);
             return readIntoMainUrls(csvPath);
