@@ -20,15 +20,16 @@ public class PrivacyReaderService {
     private static final String POLICY_REL = "[rel~=(?i)(^|\\s)privacy-policy(\\s|$)]";
     private static final int MAX_REDIRECTS = 5;
 
-    public String lookupPolicy(String url) {
+    public PolicyLookup lookupPolicy(String url) {
         URI site = webUri(url);
         if (site == null) {
-            return "Invalid HTTP(S) URL";
+            return new PolicyLookup(null, null, "Invalid HTTP(S) URL");
         }
 
+        Optional<URI> policy;
         try {
             Document page = fetchPage(site);
-            Optional<URI> policy = findPolicyLink(page);
+            policy = findPolicyLink(page);
             if (policy.isEmpty()) {
                 // Use the final page's origin in case the site redirected.
                 URI pageUrl = URI.create(page.location());
@@ -37,9 +38,27 @@ public class PrivacyReaderService {
                     policy = findPolicyLink(fetchPage(homepage));
                 }
             }
-            return policy.map(URI::toString).orElse("Privacy policy link not found");
         } catch (IOException | IllegalArgumentException e) {
-            return "Could not read website";
+            return new PolicyLookup(null, null, "Could not read website");
+        }
+
+        return policy.map(this::readPolicy)
+                .orElseGet(() -> new PolicyLookup(null, null, "Privacy policy link not found"));
+    }
+
+    private PolicyLookup readPolicy(URI policyUrl) {
+        try {
+            Document document = fetchPage(policyUrl);
+            URI finalUrl = URI.create(document.location());
+            document.select("script, style, noscript, nav, footer, [hidden]").remove();
+            Element main = document.selectFirst("main, [role=main]");
+            String text = (main == null ? document.body() : main).text();
+            if (text.isBlank()) {
+                return new PolicyLookup(finalUrl, null, "Privacy policy page contains no readable text");
+            }
+            return new PolicyLookup(finalUrl, text, null);
+        } catch (IOException | IllegalArgumentException e) {
+            return new PolicyLookup(policyUrl, null, "Could not read privacy policy");
         }
     }
 
@@ -131,4 +150,6 @@ public class PrivacyReaderService {
         }
         return null;
     }
+
+    public record PolicyLookup(URI policyUrl, String text, String error) { }
 }

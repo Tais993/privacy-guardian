@@ -1,9 +1,10 @@
 package nl.tijsbeek.privacyguardian;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.StringJoiner;
 
 /**
  * Combines service results into an overview of privacy policies by username or URL.
@@ -29,10 +30,22 @@ public class PrivacyService {
     }
 
     public String getOverviewByURLs(List<String> urls) {
-        List<String> listOfPrivacyStatements = urls.stream()
-                .map(privacyReaderService::lookupPolicy)
-                .collect(Collectors.toList());
+        StringJoiner overview = new StringJoiner("\n\n");
+        overview.setEmptyValue("No websites were found to check for privacy policies.");
+        for (String url : urls) {
+            PrivacyReaderService.PolicyLookup policy = privacyReaderService.lookupPolicy(url);
+            String heading = policy.policyUrl() == null ? url : url + " (" + policy.policyUrl() + ")";
+            String result = policy.error();
+            if (result == null) {
+                try {
+                    result = privacySummaryService.generateSummary(policy.text());
+                } catch (RestClientException | IllegalStateException e) {
+                    result = "Could not summarize privacy policy with Ollama";
+                }
+            }
+            overview.add(heading + "\n" + result);
+        }
 
-        return privacySummaryService.generateSummary(listOfPrivacyStatements);
+        return overview.toString();
     }
 }
